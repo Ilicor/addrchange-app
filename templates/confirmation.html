@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Request Received â Post Aruba{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:600px">
+  <div class="card p-4 text-center">
+    <div style="font-size:3rem;color:var(--brand-green)"><i class="bi bi-check-circle-fill"></i></div>
+    <h3 class="section-header mt-2">Request Received!</h3>
+    <p class="text-muted">Thank you for submitting your address change request. You will receive a confirmation email shortly.</p>
+
+    <table class="table table-bordered mt-3 text-start">
+      <tr><th>Request ID</th><td><strong>{{ req.id }}</strong></td></tr>
+      <tr><th>Name</th><td>{{ req.name }}</td></tr>
+      <tr><th>Type</th><td>{{ req.req_type | capitalize }}</td></tr>
+      <tr><th>Old Address</th><td>{{ req.old_address }}</td></tr>
+      <tr><th>New Address</th><td>{{ req.new_address }}</td></tr>
+      <tr><th>Service Fee</th><td><strong>AWG {{ req.price }},-</strong></td></tr>
+      <tr><th>Status</th><td><span class="badge badge-pending">Pending Payment</span></td></tr>
+    </table>
+
+    <div class="alert alert-info text-start mt-2" style="font-size:14px">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <strong>Next steps:</strong> Our team will contact you to arrange payment. Your service will start
+      <strong>5 business days</strong> after payment is confirmed and will be valid for <strong>3 months</strong>.
+    </div>
+
+    <a href="/" class="btn btn-primary mt-2">
+      <i class="bi bi-arrow-left me-2"></i>Back to Home
+    </a>
+  </div>
+</div>
+{% endblock %}
