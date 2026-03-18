@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}Post Aruba â Address Change Request{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:700px">
+
+  <div class="text-center mb-4">
+    <h2 class="section-header"><i class="bi bi-geo-alt-fill me-2"></i>Address Change Request</h2>
+    <p class="text-muted">Fill in the form below to request a 3-month address change with Post Aruba.</p>
+  </div>
+
+  {% if error %}
+  <div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</div>
+  {% endif %}
+
+  <!-- Pricing info -->
+  <div class="row g-3 mb-4">
+    <div class="col-6">
+      <div class="card text-center py-3">
+        <div style="font-size:1.8rem;color:var(--brand-blue)"><i class="bi bi-person-fill"></i></div>
+        <div class="fw-bold mt-1">Individual</div>
+        <div class="fs-4 fw-bold" style="color:var(--brand-green)">AWG 25,-</div>
+        <div class="text-muted" style="font-size:12px">Valid 3 months</div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="card text-center py-3">
+        <div style="font-size:1.8rem;color:var(--brand-blue)"><i class="bi bi-building"></i></div>
+        <div class="fw-bold mt-1">Company</div>
+        <div class="fs-4 fw-bold" style="color:var(--brand-green)">AWG 80,-</div>
+        <div class="text-muted" style="font-size:12px">Valid 3 months</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-4">
+    <form method="POST" enctype="multipart/form-data" id="requestForm">
+
+      <!-- Request type -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Request Type <span class="text-danger">*</span></label>
+        <div class="d-flex gap-4">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="req_type" id="typeIndividual" value="individual" checked>
+            <label class="form-check-label" for="typeIndividual"><i class="bi bi-person-fill me-1"></i>Individual</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="req_type" id="typeCompany" value="company">
+            <label class="form-check-label" for="typeCompany"><i class="bi bi-building me-1"></i>Company</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Full Name / Company Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="name" required placeholder="e.g. Maria Henriquez">
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
+        <input type="email" class="form-control" name="email" required placeholder="your@email.com">
+      </div>
+
+      <!-- Phone -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Phone Number</label>
+        <input type="tel" class="form-control" name="phone" placeholder="+297 560 0000">
+      </div>
+
+      <!-- Old address -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Current (Old) Address <span class="text-danger">*</span></label>
+        <textarea class="form-control" name="old_address" rows="2" required placeholder="Street, Number, City"></textarea>
+      </div>
+
+      <!-- New address -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">New Address <span class="text-danger">*</span></label>
+        <textarea class="form-control" name="new_address" rows="2" required placeholder="Street, Number, City"></textarea>
+      </div>
+
+      <!-- ID upload -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Upload ID (Passport / ID Card) <span class="text-danger">*</span></label>
+        <input type="file" class="form-control" name="id_file" accept=".pdf,.jpg,.jpeg,.png">
+        <div class="form-text">PDF, JPG or PNG â max 10 MB</div>
+      </div>
+
+      <!-- KVK (company only) -->
+      <div id="kvkSection" class="d-none">
+        <div class="mb-3">
+          <label class="form-label fw-bold">KVK Number (Chamber of Commerce) <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" name="kvk" id="kvkInput" placeholder="e.g. 12345678">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Upload KVK Extract</label>
+          <input type="file" class="form-control" name="kvk_file" accept=".pdf,.jpg,.jpeg,.png">
+          <div class="form-text">PDF, JPG or PNG â max 10 MB</div>
+        </div>
+      </div>
+
+      <!-- Terms -->
+      <div class="mb-3 p-3 rounded" style="background:#f7f7f7;border:1px solid #e0e0e0">
+        <h6 class="fw-bold mb-2"><i class="bi bi-file-text me-1"></i>Terms &amp; Conditions</h6>
+        <div style="font-size:13px;max-height:140px;overflow-y:auto;color:#555" class="mb-2">
+          <p>By submitting this form, you agree to the following:</p>
+          <ol>
+            <li>The address change service is valid for <strong>3 months</strong> from the start date.</li>
+            <li>The start date is set to <strong>5 business days after payment is confirmed</strong>.</li>
+            <li>Fees are <strong>AWG 25,-</strong> for individuals and <strong>AWG 80,-</strong> for companies and are non-refundable.</li>
+            <li>You are responsible for ensuring the accuracy of the addresses provided.</li>
+            <li>Post Aruba will send a reminder email <strong>1 week before expiry</strong>. It is your responsibility to renew if needed.</li>
+            <li>Post Aruba reserves the right to reject applications that do not comply with postal regulations.</li>
+            <li>Uploaded documents will be used solely for verification purposes and handled in accordance with the Aruban Privacy Ordinance.</li>
+          </ol>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="agree" id="agreeCheck" value="yes" required>
+          <label class="form-check-label fw-bold" for="agreeCheck">
+            I have read and agree to the Terms &amp; Conditions
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+        <i class="bi bi-send-fill me-2"></i>Submit Address Change Request
+      </button>
+    </form>
+  </div>
+
+  <div class="text-center mt-3 text-muted" style="font-size:13px">
+    <i class="bi bi-lock-fill me-1"></i>Your data is handled securely and used only for processing your request.
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const radios = document.querySelectorAll('input[name="req_type"]');
+  const kvkSection = document.getElementById('kvkSection');
+  const kvkInput   = document.getElementById('kvkInput');
+
+  function toggleKvk() {
+    const isCompany = document.getElementById('typeCompany').checked;
+    kvkSection.classList.toggle('d-none', !isCompany);
+    kvkInput.required = isCompany;
+  }
+  radios.forEach(r => r.addEventListener('change', toggleKvk));
+</script>
+{% endblock %}
