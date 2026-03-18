@@ -1,0 +1,156 @@
+/* âââ Post Aruba Brand Colours âââââââââââââââââââââââââââââââââââââââââââââââ */
+:root {
+    --pa-blue:       #003DA5;
+    --pa-blue-dark:  #00298f;
+    --pa-yellow:     #FFD200;
+    --pa-yellow-dark:#e6bd00;
+    --pa-light:      #f4f6fb;
+    --pa-green:      #1fb25e;
+
+    /* backward-compat aliases used by templates */
+    --brand-blue:    #003DA5;
+    --brand-green:   #1fb25e;
+    --brand-yellow:  #FFD200;
+}
+
+/* âââ Base ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+body {
+    background-color: var(--pa-light);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #212529;
+}
+
+/* âââ Navbar ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.pa-navbar {
+    background: var(--pa-blue);
+    box-shadow: 0 2px 8px rgba(0,0,0,.18);
+}
+
+.pa-navbar .navbar-brand {
+    font-size: 1.25rem;
+    letter-spacing: .5px;
+    color: #fff !important;
+}
+
+.pa-navbar .nav-link {
+    color: rgba(255,255,255,.85) !important;
+    transition: color .15s;
+}
+.pa-navbar .nav-link:hover,
+.pa-navbar .nav-link.active {
+    color: var(--pa-yellow) !important;
+}
+.pa-navbar .navbar-toggler-icon {
+    filter: invert(1);
+}
+
+/* âââ Dropdown ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.pa-navbar .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+    border-radius: .5rem;
+}
+
+/* âââ Buttons âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.btn-primary {
+    background-color: var(--pa-blue);
+    border-color:     var(--pa-blue);
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--pa-blue-dark);
+    border-color:     var(--pa-blue-dark);
+}
+
+.btn-pa {
+    background-color: var(--pa-blue);
+    border-color:     var(--pa-blue);
+    color: #fff;
+}
+.btn-pa:hover, .btn-pa:focus {
+    background-color: var(--pa-blue-dark);
+    border-color:     var(--pa-blue-dark);
+    color: #fff;
+}
+
+.btn-outline-pa {
+    color:        var(--pa-blue);
+    border-color: var(--pa-blue);
+}
+.btn-outline-pa:hover {
+    background-color: var(--pa-blue);
+    color: #fff;
+}
+
+/* âââ Cards âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.card {
+    border: none;
+    border-radius: .75rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+
+.pa-card-header {
+    background: var(--pa-blue);
+    color: #fff;
+    font-weight: 600;
+    border-radius: .75rem .75rem 0 0 !important;
+}
+
+/* âââ Section titles ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.section-header, .section-title {
+    color: var(--pa-blue);
+    font-weight: 700;
+}
+
+.section-title {
+    border-bottom: 2px solid var(--pa-yellow);
+    padding-bottom: .35rem;
+}
+
+/* âââ Status badges âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.badge-pending  { background: var(--pa-yellow); color: #333; }
+.badge-active   { background: var(--pa-green);  color: #fff; }
+.badge-expired  { background: #dc3545;           color: #fff; }
+.badge-cancelled{ background: #6c757d;           color: #fff; }
+
+/* âââ Stat cards âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.stat-card {
+    border-radius: .75rem;
+    border: none;
+    color: #fff;
+}
+.stat-card .stat-icon   { font-size: 1.8rem; opacity: .8; margin-bottom: .3rem; }
+.stat-card .stat-number { font-size: 2.2rem; font-weight: 700; line-height: 1; }
+.stat-card .stat-label  { font-size: .82rem; opacity: .88; margin-top: .25rem; }
+
+/* âââ Table tweaks ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.table > :not(caption) > * > * {
+    padding: .6rem .75rem;
+}
+.table tbody tr:hover td { background-color: #eef2ff; }
+
+/* âââ Confirmation animation ââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.confirmation-icon {
+    animation: pop .4s ease-out;
+}
+@keyframes pop {
+    0%   { transform: scale(.5); opacity: 0; }
+    80%  { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* âââ Icon circle (hero areas) âââââââââââââââââââââââââââââââââââââââââââââââ */
+.pa-icon-circle {
+    width: 72px; height: 72px;
+    background: var(--pa-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* âââ Footer ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+.pa-footer {
+    background: var(--pa-blue);
+    color: rgba(255,255,255,.7);
+    font-size: .82rem;
+}
