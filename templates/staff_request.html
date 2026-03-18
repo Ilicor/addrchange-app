@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}Request {{ req.id }} â Post Aruba{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:760px">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="section-header mb-0">
+      <i class="bi bi-file-earmark-person me-2"></i>Request <code>{{ req.id }}</code>
+    </h4>
+    <a href="/staff/dashboard" class="btn btn-sm btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1"></i>Back
+    </a>
+  </div>
+
+  {% if saved %}
+  <div class="alert alert-success"><i class="bi bi-check-circle-fill me-2"></i>Changes saved successfully.</div>
+  {% endif %}
+  {% if error %}
+  <div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</div>
+  {% endif %}
+
+  {% set can_edit_all     = current_user.role == 'admin' %}
+  {% set can_edit_payment = current_user.role in ['admin','finance'] %}
+  {% set view_only        = current_user.role == 'mpc' %}
+
+  <form method="POST">
+  <div class="row g-3">
+
+    <!-- Left column: client info -->
+    <div class="col-md-6">
+      <div class="card p-3 h-100">
+        <h6 class="fw-bold mb-3" style="color:var(--brand-blue)"><i class="bi bi-person-fill me-1"></i>Client Information</h6>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Full Name</label>
+          <input type="text" class="form-control form-control-sm" name="name" value="{{ req.name }}"
+                 {% if not can_edit_all %}readonly{% endif %}>
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Email</label>
+          <input type="email" class="form-control form-control-sm" name="email" value="{{ req.email }}"
+                 {% if not can_edit_all %}readonly{% endif %}>
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Phone</label>
+          <input type="tel" class="form-control form-control-sm" name="phone" value="{{ req.phone or '' }}"
+                 {% if not can_edit_all %}readonly{% endif %}>
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Type</label>
+          <input type="text" class="form-control form-control-sm" value="{{ req.req_type | capitalize }}" readonly>
+        </div>
+        {% if req.kvk %}
+        <div class="mb-2">
+          <label class="form-label fw-bold small">KVK</label>
+          <input type="text" class="form-control form-control-sm" value="{{ req.kvk }}" readonly>
+        </div>
+        {% endif %}
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Fee</label>
+          <input type="text" class="form-control form-control-sm" value="AWG {{ req.price }},-" readonly>
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Submitted</label>
+          <input type="text" class="form-control form-control-sm" value="{{ req.created_at[:19].replace('T',' ') }}" readonly>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: address & dates -->
+    <div class="col-md-6">
+      <div class="card p-3 h-100">
+        <h6 class="fw-bold mb-3" style="color:var(--brand-blue)"><i class="bi bi-geo-alt-fill me-1"></i>Address Details</h6>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Old Address</label>
+          <textarea class="form-control form-control-sm" name="old_address" rows="2"
+                    {% if not can_edit_all %}readonly{% endif %}>{{ req.old_address }}</textarea>
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-bold small">New Address</label>
+          <textarea class="form-control form-control-sm" name="new_address" rows="2"
+                    {% if not can_edit_all %}readonly{% endif %}>{{ req.new_address }}</textarea>
+        </div>
+
+        <hr class="my-2">
+        <h6 class="fw-bold mb-2" style="color:var(--brand-blue)"><i class="bi bi-calendar3 me-1"></i>Dates</h6>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Payment Date</label>
+          <input type="date" class="form-control form-control-sm" name="payment_date"
+                 value="{{ req.payment_date or '' }}"
+                 {% if not can_edit_payment %}readonly{% endif %}>
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Start Date <span class="text-muted">(auto: pay+5d)</span></label>
+          <input type="date" class="form-control form-control-sm" name="start_date"
+                 value="{{ req.start_date or '' }}"
+                 {% if not can_edit_all %}readonly{% endif %}>
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Expiry Date <span class="text-muted">(auto: start+3mo)</span></label>
+          <input type="date" class="form-control form-control-sm" name="expiry_date"
+                 value="{{ req.expiry_date or '' }}"
+                 {% if not can_edit_all %}readonly{% endif %}>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status & payment row -->
+    <div class="col-12">
+      <div class="card p-3">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label fw-bold small">Request Status</label>
+            {% if can_edit_all %}
+            <select class="form-select form-select-sm" name="status">
+              {% for s in ['pending','active','expired','cancelled'] %}
+              <option value="{{ s }}" {% if req.status == s %}selected{% endif %}>{{ s | capitalize }}</option>
+              {% endfor %}
+            </select>
+            {% else %}
+            <input type="text" class="form-control form-control-sm" value="{{ req.status | capitalize }}" readonly>
+            {% endif %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold small">Payment Status</label>
+            {% if can_edit_payment %}
+            <select class="form-select form-select-sm" name="payment_status">
+              <option value="unpaid"   {% if req.payment_status == 'unpaid'   %}selected{% endif %}>Unpaid</option>
+              <option value="paid"     {% if req.payment_status == 'paid'     %}selected{% endif %}>Paid</option>
+              <option value="refunded" {% if req.payment_status == 'refunded' %}selected{% endif %}>Refunded</option>
+            </select>
+            {% else %}
+            <input type="text" class="form-control form-control-sm" value="{{ req.payment_status | capitalize }}" readonly>
+            {% endif %}
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            {% if req.payment_status == 'paid' %}
+            <span class="badge bg-success py-2 w-100 text-center">
+              <i class="bi bi-check-circle-fill me-1"></i>Payment Confirmed
+            </span>
+            {% else %}
+            <span class="badge bg-warning text-dark py-2 w-100 text-center">
+              <i class="bi bi-clock-fill me-1"></i>Awaiting Payment
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes (admin only) -->
+    {% if can_edit_all %}
+    <div class="col-12">
+      <div class="card p-3">
+        <label class="form-label fw-bold small"><i class="bi bi-chat-left-text me-1"></i>Internal Notes</label>
+        <textarea class="form-control form-control-sm" name="notes" rows="2"
+                  placeholder="Add internal notes hereâ¦">{{ req.notes or '' }}</textarea>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Uploaded files -->
+    {% if req.id_file or req.kvk_file %}
+    <div class="col-12">
+      <div class="card p-3">
+        <h6 class="fw-bold mb-2" style="color:var(--brand-blue)"><i class="bi bi-paperclip me-1"></i>Uploaded Documents</h6>
+        {% if req.id_file %}
+        <a href="/staff/files/{{ req.id_file }}" class="btn btn-sm btn-outline-primary me-2">
+          <i class="bi bi-file-earmark-person me-1"></i>Download ID
+        </a>
+        {% endif %}
+        {% if req.kvk_file %}
+        <a href="/staff/files/{{ req.kvk_file }}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-file-earmark-text me-1"></i>Download KVK Extract
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    {% if not view_only %}
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary fw-bold px-4">
+        <i class="bi bi-floppy-fill me-2"></i>Save Changes
+      </button>
+    </div>
+    {% endif %}
+
+  </div>
+  </form>
+
+</div>
+{% endblock %}
