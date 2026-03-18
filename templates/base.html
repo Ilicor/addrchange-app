@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Post Aruba — Address Change{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="/static/css/style.css">
@@ -24,7 +27,7 @@
       <ul class="navbar-nav ms-auto">
         {% if current_user %}
           <li class="nav-item">
-            <a class="nav-link" href="/staff/dashboard">
+            <a class="nav-link btn-nav" href="/staff/dashboard">
               <i class="bi bi-speedometer2"></i> Dashboard
             </a>
           </li>
