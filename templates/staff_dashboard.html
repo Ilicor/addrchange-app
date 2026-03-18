@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Dashboard â Post Aruba Address Change{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="section-header mb-0"><i class="bi bi-table me-2"></i>Address Change Requests</h4>
+    {% if current_user.role == 'admin' %}
+    <span class="badge bg-primary">Admin</span>
+    {% elif current_user.role == 'finance' %}
+    <span class="badge bg-success">Finance</span>
+    {% else %}
+    <span class="badge bg-secondary">MPC â View Only</span>
+    {% endif %}
+  </div>
+
+  <!-- Filters -->
+  <form method="GET" class="row g-2 mb-3">
+    <div class="col-auto">
+      <input type="text" class="form-control form-control-sm" name="q" value="{{ search }}" placeholder="Search name / email / IDâ¦">
+    </div>
+    <div class="col-auto">
+      <select class="form-select form-select-sm" name="status">
+        <option value="">All statuses</option>
+        {% for s in ['pending','active','expired','cancelled'] %}
+        <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s | capitalize }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-auto">
+      <select class="form-select form-select-sm" name="payment">
+        <option value="">All payments</option>
+        <option value="unpaid"  {% if payment_filter == 'unpaid'  %}selected{% endif %}>Unpaid</option>
+        <option value="paid"    {% if payment_filter == 'paid'    %}selected{% endif %}>Paid</option>
+        <option value="refunded"{% if payment_filter == 'refunded'%}selected{% endif %}>Refunded</option>
+      </select>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+      <a href="/staff/dashboard" class="btn btn-sm btn-outline-secondary ms-1">Reset</a>
+    </div>
+  </form>
+
+  <!-- Summary cards -->
+  <div class="row g-2 mb-3">
+    {% set total    = requests | length %}
+    {% set unpaid   = requests | selectattr('payment_status','eq','unpaid')   | list | length %}
+    {% set paid     = requests | selectattr('payment_status','eq','paid')     | list | length %}
+    {% set expiring = requests | selectattr('status','eq','active')           | list | length %}
+    <div class="col-6 col-md-3">
+      <div class="card text-center py-2">
+        <div class="fs-3 fw-bold" style="color:var(--brand-blue)">{{ total }}</div>
+        <div class="text-muted" style="font-size:12px">Total</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center py-2">
+        <div class="fs-3 fw-bold text-warning">{{ unpaid }}</div>
+        <div class="text-muted" style="font-size:12px">Awaiting Payment</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center py-2">
+        <div class="fs-3 fw-bold" style="color:var(--brand-green)">{{ paid }}</div>
+        <div class="text-muted" style="font-size:12px">Paid</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center py-2">
+        <div class="fs-3 fw-bold" style="color:var(--brand-blue)">{{ expiring }}</div>
+        <div class="text-muted" style="font-size:12px">Active</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle" style="font-size:14px">
+        <thead style="background:var(--brand-blue);color:#fff">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Old Address</th>
+            <th>New Address</th>
+            <th>Fee</th>
+            <th>Payment</th>
+            <th>Start</th>
+            <th>Expiry</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in requests %}
+          <tr>
+            <td><code>{{ r.id }}</code></td>
+            <td>{{ r.name }}<br><small class="text-muted">{{ r.email }}</small></td>
+            <td>
+              {% if r.req_type == 'company' %}
+                <span class="badge bg-secondary"><i class="bi bi-building me-1"></i>Company</span>
+              {% else %}
+                <span class="badge" style="background:var(--brand-blue)"><i class="bi bi-person-fill me-1"></i>Individual</span>
+              {% endif %}
+            </td>
+            <td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ r.old_address }}">{{ r.old_address }}</td>
+            <td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ r.new_address }}">{{ r.new_address }}</td>
+            <td>AWG {{ r.price }},-</td>
+            <td>
+              {% if r.payment_status == 'paid' %}
+                <span class="badge bg-success">Paid</span>
+              {% elif r.payment_status == 'refunded' %}
+                <span class="badge bg-info text-dark">Refunded</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Unpaid</span>
+              {% endif %}
+            </td>
+            <td>{{ r.start_date or 'â' }}</td>
+            <td>
+              {% if r.expiry_date %}
+                {% set today = now_date %}
+                {{ r.expiry_date }}
+              {% else %}â{% endif %}
+            </td>
+            <td>
+              {% if r.status == 'active' %}
+                <span class="badge badge-active">Active</span>
+              {% elif r.status == 'expired' %}
+                <span class="badge badge-expired">Expired</span>
+              {% elif r.status == 'cancelled' %}
+                <span class="badge badge-cancelled">Cancelled</span>
+              {% else %}
+                <span class="badge badge-pending">Pending</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="/staff/request/{{ r.id }}" class="btn btn-sm btn-outline-primary">
+                {% if current_user.role == 'mpc' %}
+                  <i class="bi bi-eye"></i>
+                {% else %}
+                  <i class="bi bi-pencil"></i>
+                {% endif %}
+              </a>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="11" class="text-center text-muted py-4">No requests found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
